@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/jquery.min.js"></script>
+    <style>
+        .video{
+            width: 100%;
+            height: 100%;
+        }
+        .line{
+            padding-top: 5px;
+            font-size: 12px;
+            color: #ac2925;
+        }
+        .maxmac{
+            position: fixed!important;
+            top:56px!important;
+            left: 0!important;
+            width: 100%!important;
+            height:calc(100% - 56px)!important;
+            margin: 0!important;
+        }
+        #setTab .tab_nav{
+            width: 500px;
+            height: 32px;
+            border-bottom: solid 1px #ccc;
+            margin-left: 0;
+            padding-left:0 ;
+            margin-top: 0;
+            padding-top: 0;
+        }
+        #setTab .tab_nav li{
+            padding-left: 0;
+            list-style: none;
+            width: 130px;
+            height: 32px;
+            line-height: 32px;
+            float: left;
+            text-align: center;
+            margin-left: 1px;
+        }
+        .cur{
+            border-bottom: solid 2px #1080cc;
+        }
+        .qiye .uleft{
+            float: left;
+            height: auto;
+            width: 110px;
+            margin: 0;
+            padding:0 ;
+            border-top: solid 1px #ccc;
+        }
+        .qiye .uleft li{
+            list-style: none;
+            text-align: center;
+            background: #f6f6f6;
+            color: #333;
+            width: 108px;
+            border: solid 1px #ccc;
+            border-top: none;
+            height: 34px;
+            line-height: 34px;
+            font-size: 14px;
+        }
+        .qiye .uright{
+            float: left;
+            height: auto;
+            width: 370px;
+            margin: 0;
+            padding:0 ;
+
+        }
+        .tab_nav li:hover{
+            cursor: pointer;
+        }
+        .qiye .uright li{
+            list-style: none;
+            text-align: left;
+            padding-left: 5px;
+            background: #fff;
+            color: #000;
+            font-size: 14px;
+            width: 384px;
+            border: solid 1px #ccc;
+            border-left: none;
+            border-top: none;
+            height: 34px;
+            line-height: 34px;
+        }
+    </style>
+</head>
+<body>
+    <div id="setTab">
+        <ul class="tab_nav">
+            <li class="cur">视频</li>
+            <li>企业信息</li>
+        </ul>
+        <div class="tab_div">
+            <div class="video"  style="display: block">
+               
+                <div id="ocxContainer" style="width:500px;height:300px" dblclick="changeSize()"></div>
+                <div class="line"><font>首次运行请安装视频插件后再试！</font><a href="../Download/WebCtrl_V4.2.3.exe">插件下载</a></div>
+            </div>
+            <div class="qiye"   style="display: none">
+                <ul class="uleft">
+                    <li>企业名称</li>
+                    <li>联系人</li>
+                    <li>联系电话</li>
+                    <li>开关状态</li>
+                    <!--<li>企业地址</li>
+                    <li>所属网格</li>
+                    <li>网格员</li>
+                    <li>网格员联系方式</li>
+                    <li>监控类型</li>-->
+                </ul>
+                <ul class="uright">
+                    <li class="onlie1" style=" border-top: solid 1px #ccc;"></li>
+                    <li class="onlie2"></li>
+                    <li class="onlie3"></li>
+                    <li class="onlie4">关</li>
+                    <!--<li class="onlie5"></li>
+                    <li class="onlie6"></li>
+                    <li class="onlie7"></li>
+                    <li class="onlie8"></li>
+                    <li class="onlie9"></li>-->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            //切换功能
+            $("#setTab").setTab();
+            //读取url传参数截取
+            function GetQueryString(name) {
+                var search = document.location.search;
+                var pattern = new RegExp("[?&]" + name + "\=([^&]+)", "g");
+                var matcher = pattern.exec(search);
+                var items = null;
+                if (null != matcher) {
+                    try {
+                        items = decodeURIComponent(decodeURIComponent(matcher[1]));
+                    } catch (e) {
+                        try {
+                            items = decodeURIComponent(matcher[1]);
+                        } catch (e) {
+                            items = matcher[1];
+                        }
+                    }
+                }
+                return items;
+            };
+            //设置参数或者获取参数
+            var name = GetQueryString('name');//摄像头名称
+            var panyname = GetQueryString('panyname');//企业名称
+            var Vtype = decodeURI(GetQueryString('type'));//摄像头类型
+            var area = GetQueryString('area');//广阳、开发、高空
+            var camIndexCode = GetQueryString('camIndexCode');//camIndexCode
+            var devIndexCode = GetQueryString('devIndexCode');//devIndexCode
+            var dataurl;
+            var list;
+
+                
+                 $.ajax({
+		            //提交数据的类型 POST GET
+		            type:"POST",
+		            //提交的网址
+		            url:"http://118.186.228.114:9999/api/Video/GetVideoDeviceInfo",
+		            //提交的数据
+		            data:{name:panyname},
+		            //返回数据的格式
+		            datatype: "json",
+		            //成功返回之后调用的函数             
+		            success:function(data){
+		           		if(data){
+                            var textdata = data.ExtraData || null;
+                            var text1 = textdata[0].CompanyName ? textdata[0].CompanyName : '----';;//企业名称
+                            $(".onlie1").prepend(text1);
+                            var text2 = textdata[0].Contact ? textdata[0].Contact : '----';//联系方式
+                            $(".onlie2").prepend(text2);
+                            var text3 = textdata[0].Phone ? textdata[0].Phone : '----';//联系方式
+                            $(".onlie3").prepend(text3);  
+                       	}
+		            },
+		            //调用出错执行的函数
+		            error: function(){
+		                //请求出错处理
+		                console.log(e)
+		            }         
+         		});
+
+           //change改变事件
+            $('#myselect').change(function(){
+                var oSelect = document.getElementById('myselect');
+                var optionsIndex = oSelect.selectedIndex;
+                console.log(optionsIndex);
+                var optext = $(this).children('option:selected').val();//这就是selected的值
+                if(optext){
+                    //获取列表摄像机数据
+                    switch (optionsIndex){
+                        case 1:
+                            name = list[0].CamName;
+                            camIndexCode = list[0].CamIndexCode;
+                            devIndexCode = list[0].DevIndexCode;
+                            break;
+                        case 2:
+                            name = list[1].CamName;
+                            camIndexCode = list[1].CamIndexCode;
+                            devIndexCode = list[1].DevIndexCode;
+                            break;
+                        case 3:
+                            name = list[2].CamName;
+                            camIndexCode = list[2].CamIndexCode;
+                            devIndexCode = list[2].DevIndexCode;
+                            break;
+                        case 4:
+                            name = list[3].CamName;
+                            camIndexCode = list[3].CamIndexCode;
+                            devIndexCode = list[3].DevIndexCode;
+                            break;
+                        case 5:
+                            name = list[4].CamName;
+                            camIndexCode = list[4].CamIndexCode;
+                            devIndexCode = list[4].DevIndexCode;
+                            break;
+                        case 6:
+                            name = list[5].CamName;
+                            camIndexCode = list[5].CamIndexCode;
+                            devIndexCode = list[5].DevIndexCode;
+                            break;
+                        case 7:
+                            name = list[6].CamName;
+                            camIndexCode = list[6].CamIndexCode;
+                            devIndexCode = list[6].DevIndexCode;
+                            break;
+                        case 8:
+                            name = list[7].CamName;
+                            camIndexCode = list[7].CamIndexCode;
+                            devIndexCode = list[7].DevIndexCode;
+                            break;
+                        case 9:
+                            name = list[8].CamName;
+                            camIndexCode = list[8].CamIndexCode;
+                            devIndexCode = list[8].DevIndexCode;
+                            break;
+                        case 10:
+                            name = list[9].CamName;
+                            camIndexCode = list[9].CamIndexCode;
+                            devIndexCode = list[9].DevIndexCode;
+                            break;
+                    }
+                    //停止上次播放
+                    OnStopPreview();
+                    //开启选中列表播放
+                    setTimeout(function () {
+                        OnStartPreview(area,name,camIndexCode,devIndexCode);
+                    }, 800)
+                }
+            })
+            //初始化插件
+            OnInit();
+            // 检查插件是否已经安装过
+            function OnInit() {
+                document.getElementById('ocxContainer').innerHTML = '<object classid="clsid:E55C9850-D54F-4DF2-A7B4-B8C3B687BE2F" id="preview"  width="500" height="300" name="ocx" style="z-index:1;">' +
+                    '请使用IE浏览器预览或者360浏览器兼容模式' +
+//                    '<param value="transparent" name="wmode">'+
+//                    '<embed height="300" width="500" wmode="transparent">'+
+                    '</object>';
+                var _right = "10034,10033,10032,10020,10027,10014,10001,10028,10002,10015,10005,10010,10024,10006,10011,10003,10021,10012,10022,10004,10013,10009,10029";
+                var rightcodestate = preview.SetRightCode(_right);
+                var _toolbar = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                    + "<ToolBar><Item type=\"0\" /><Item type=\"24\" /><Item type=\"5\" />"
+                    + "<Item type=\"6\" /><Item type=\"7\" /><Item type=\"8\" />"
+                    + "<Item type=\"9\" /><Item type=\"10\" /><Item type=\"12\" />"
+                    + "<Item type=\"17\" /><Item type=\"20\" /><Item type=\"21\" />"
+                    + "<Item type=\"22\" /></ToolBar>";
+                var ToolBarstate = preview.SetToolBar(_toolbar);
+                preview.SetToolBarAlwaysShow(1);
+                preview.SetInstPlayCfg(30);
+                var _snap = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                    + "<SnapShot><PicType>jpeg</PicType><Quality>80</Quality><SnapMulti>1</SnapMulti>"
+                    + "<SnapTimes>3</SnapTimes><TimeSpan>1</TimeSpan><SaveFolder>C:\\hikvisiontest</SaveFolder><KeyWords></KeyWords></SnapShot>";
+                var SnapParamstate = preview.SetSnapParam(_snap);
+                var _record = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                    + "<VideoRecord><PackType>0</PackType><MaxRecTime>0</MaxRecTime>"
+                    + "<PackTime>100</PackTime><PackSize>100</PackSize><SaveFolder>C:\\hikvisiontest</SaveFolder><KeyWords></KeyWords></VideoRecord>";
+                var RecordParamstate = preview.SetRecordParam(_record);
+            }
+            //初次调用视频
+            OnStartPreview(area,name,camIndexCode,devIndexCode);
+            //开始播放视频参数
+            function OnStartPreview(area,name,camIndexCode,devIndexCode) {
+
+                var area = area;
+                var ip,username,password,port;
+                var camIndexCode = camIndexCode;
+                console.log(camIndexCode);
+                var devIndexCode = devIndexCode;
+                var name = name;
+                var canshu = [
+                  
+                    //开发区
+                    {
+                        username:'admin',
+                        password:'Admin12345?',
+                        ip:'192.168.20.10',
+                        port:'7302'
+                    }
+                   
+                ];
+                switch(area) {
+                    
+                    case '开发区':
+                        ip = canshu[0].ip;
+                        username = canshu[0].username;
+                        password = canshu[0].password;
+                        port = canshu[0].port;
+                        break;
+                    
+                }
+                //设置视频参数
+                if(camIndexCode ) {
+                  var _param = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                    + "<Preview>"
+                    + "<CamIndexCode>" + camIndexCode + "</CamIndexCode>"//摄像头编码
+                    + "<DevIndexCode>" + devIndexCode + "</DevIndexCode>"//设备编码
+                    + "<UserName>admin</UserName>" //验证
+                    + "<PassWord>Admin12345?</PassWord>"//验证
+                    + "<UserLevel>50</UserLevel>"
+                    + "<CamName>" + name + "</CamName>"//摄像头名称
+                    + "<DevType>0</DevType>"
+                    + "<ChannelNo>1</ChannelNo>"//验证
+                    + "<LinkType>1</LinkType>"
+                    + "<StreamType>0</StreamType>"
+                    + "<SubStream>MAIN</SubStream>"
+                    + "<NetZone cnid=\"1\" pnid=\"1\"/>"
+                    + "<StreamSvr>"
+                    + "<Svr type=\"3\" ip=\"192.168.20.11\" port=\"7302\"/>"//验证
+                    + "</StreamSvr>"
+                    + "<ProSeries>201</ProSeries>"
+                    + "<TreatyType>SDK</TreatyType>"
+                    + "<FishEyeInfo>"
+                    + "<InstallType></InstallType>"
+                    + "<VideoDevType>16</VideoDevType>"
+                    + "</FishEyeInfo>"
+                    + "</Preview>";
+                  //alert(_param);
+
+                  var StartPreviewExstate = preview.StartPreviewEx(_param);
+                }
+            }
+            //停止播放视频
+            function OnStopPreview() {
+                var StopPreviewstate = preview.StopPreview();
+            }
+
+     });
+    </script>
+    <script>
+        //封装自运行切换方法
+        (function ($) {
+            $.fn.setTab = function () {
+                var getTab=$(this),//this指向调用函数的ID
+                    panels = getTab.children("div.tab_div").children("div"),
+                    tabs = getTab.find("li");
+                return this.each(function(){
+                    $(tabs).click(function(e) {
+                        var index = $.inArray(this, $(this).parent().find("li"));//this指向li
+                        if (panels.eq(index)[0]) {
+                            $(tabs).removeClass("cur");
+                            $(this).addClass("cur");
+                            panels.css("display", "none").eq(index).css("display", "block");
+                        }
+                    });
+                });
+            }
+        })(jQuery);
+    </script>
+</body>
+</html>
