@@ -34,11 +34,15 @@ export default{
 	margin-top: 20px;
 	background: #FFF;
 	.index1{
+		margin: 10px;
 		width: 300px;
 		height: 200px;
 		background: #eee;
 		header{
 			text-align: center;
+		}
+		a{
+			display: block;
 		}
 	}
 }

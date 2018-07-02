@@ -18,9 +18,8 @@
 		<div v-if="!pass && progress !== 0" class="img-content img-progress">
 			<el-progress type="circle" :percentage="progress" :status="proStatus"></el-progress>
 		</div>
-		/*图片上传部分
-		 * name默认为file,可根据后端要求修改
-		 */
+		<!--图片上传部分
+		name默认为file,可根据后端要求修改-->
 		<div class="img-upload">
 			<el-upload class="uploader" accept="image/*"
 			  ref="upload"
