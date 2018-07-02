@@ -18,9 +18,13 @@
 		<div v-if="!pass && progress !== 0" class="img-content img-progress">
 			<el-progress type="circle" :percentage="progress" :status="proStatus"></el-progress>
 		</div>
+		/*图片上传部分
+		 * name默认为file,可根据后端要求修改
+		 */
 		<div class="img-upload">
 			<el-upload class="uploader" accept="image/*"
 			  ref="upload"
+			  name="file"
 			  list-type="picture-card"
 			  :show-file-list="false"
 			  :action="params.action"
@@ -90,6 +94,7 @@ export default{
 				this.$message.error("图片上传出错，请刷新重试！")
 			}
 		},
+		//上传成功，在file内会有后端返回值，即长传图片的路径
 		uploadOnSuccess(e,file){//上传附件
 			console.log("——————————success——————————")
 			this.pass = true;

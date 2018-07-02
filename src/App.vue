@@ -1,9 +1,5 @@
 <template>
   <div id="app">
-  	<div>
-	  		<v-header></v-header>
-  	</div>
-		
     <keep-alive>
       <router-view></router-view>
      </keep-alive>
@@ -27,7 +23,7 @@ export default {
 	margin: 0;
 	padding: 0;
 }
-#app {
+html,body,#app {
 	width: 100%;
 	height: 100%;
 }
